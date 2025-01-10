@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventFormRequest;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
@@ -13,7 +14,10 @@ class EventController extends Controller
      */
     public function index()
     {
-        //
+        $events = Event::all();
+        return view('home', [
+            'listeDesEvents'=>$events
+        ]);
     }
 
     /**
@@ -21,15 +25,16 @@ class EventController extends Controller
      */
     public function create()
     {
-        //
+        return view("create");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreEventRequest $request)
+    public function store(EventFormRequest $request)
     {
-        //
+        $event = Event::create($request->validated());
+        return to_route('event.index')->with('created', 'L\'événement a été créé avec succés!');
     }
 
     /**
@@ -37,7 +42,9 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        //
+        return view('show', [
+            'event'=>$event
+        ]);
     }
 
     /**
@@ -45,15 +52,18 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        //
+        return view('edit', [
+            'event'=>$event
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEventRequest $request, Event $event)
+    public function update(EventFormRequest $request, Event $event)
     {
-        //
+        $event->update($request->validated());
+        return to_route('event.index')->with('edited', 'L\'événement a été modifié avec succés!');
     }
 
     /**
@@ -61,6 +71,7 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        //
+        $event->delete();
+        return to_route('event.index')->with('deleted', 'L\'événement a été supprimé avec succés!');
     }
 }
